@@ -14,8 +14,6 @@
 <h1>trundling time</h1>
 <Input {stops} />
 
-<img src="thatguy.jpg" alt="little baby squirrel loves to navigate the world" />
-
 <h3>
     (do NOT call me crusty !!! i am textured ) i jus drank milk all over my big
     chinney
@@ -38,7 +36,7 @@
 
 <style>
     img {
-        width: 900px;
+        width: 200px;
         display: block;
         margin: 0 auto;
     }
