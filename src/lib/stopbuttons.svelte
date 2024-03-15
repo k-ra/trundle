@@ -1,17 +1,15 @@
 <script lang="ts">
+    export let stops;
+    import { user_route } from "../stores/userdata.js";
     let status = "start";
-    let user_route = new Array(2);
-    let stops = [
-        { stop_id: 1, stop_name: "WIDENER" },
-        { stop_id: 2, stop_name: "QUAD" },
-    ];
+    // let user_route = new Array(2);
 
     function handleStopClick(stop_id: number) {
         if (status == "start") {
-            user_route[0] = stop_id;
+            user_route[0].set(stop_id);
             status = "end";
         } else {
-            user_route[1] = stop_id;
+            user_route[1].set(stop_id);
         }
     }
 </script>
@@ -29,12 +27,22 @@
 
 <style>
     .start {
-        color: green;
+        color: #20af8c;
     }
-    .stop {
-        color: red;
+    .end {
+        color: #8422a3;
     }
+
     button {
         font-size: 25pt;
+        font-weight: normal;
+        border: none;
+        background-color: white;
+        transition: all 0.3s ease-out 50ms;
+    }
+
+    button:hover {
+        font-weight: bolder;
+        font-size: 30pt;
     }
 </style>
