@@ -1,28 +1,31 @@
 <script lang="ts">
+    import Page from "../routes/+page.svelte";
     export let stops;
-    import { user_route } from "../stores/userdata.js";
+    import { start, dest } from "../stores/userdata.js";
     let status = "start";
-    // let user_route = new Array(2);
+    let input_route = new Array(2);
 
     function handleStopClick(stop_id: number) {
-        if (status == "start") {
-            user_route[0].set(stop_id);
+        if (status === "start") {
+            start.set(stop_id);
             status = "end";
         } else {
-            user_route[1].set(stop_id);
+            dest.set(stop_id);
+            status = "";
         }
     }
 </script>
 
-<h1>input your {status} stop</h1>
-{#each stops as { stop_id, stop_name }}
-    <button class={status} on:click={() => handleStopClick(stop_id)}>
-        {stop_name}
-    </button>
-{/each}
-
+{#if status}
+    <h1>input your {status} stop</h1>
+    {#each stops as { stop_id, stop_name }}
+        <button class={status} on:click={() => handleStopClick(stop_id)}>
+            {stop_name}
+        </button>
+    {/each}
+{/if}
 <h2>
-    TESTING!!! start stop id = {user_route[0]}. end stop id = {user_route[1]}
+    outdoor!!!start: {$start} stop: {$dest}
 </h2>
 
 <style>

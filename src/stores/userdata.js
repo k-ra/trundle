@@ -1,3 +1,4 @@
 import { writable } from "svelte/store";
 
-export const user_route = writable([0, 0]);
+export const start = writable(0);
+export const dest = writable(0);
