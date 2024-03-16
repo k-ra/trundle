@@ -7,3 +7,15 @@
     chinney
 </h3>
 <h2>do you want to know about what is on my Map!</h2>
+
+<style>
+    img {
+        width: 200px;
+        display: block;
+        margin: 0 auto;
+    }
+
+    h2 {
+        text-align: center;
+    }
+</style>

@@ -13,15 +13,3 @@
 </h1>
 <br />
 <Quirk />
-
-<style>
-    img {
-        width: 200px;
-        display: block;
-        margin: 0 auto;
-    }
-
-    h2 {
-        text-align: center;
-    }
-</style>
