@@ -256,7 +256,7 @@
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
-        margin: 20px;
+        /* margin: 20px; */
         font-size: 18pt;
     }
 
@@ -273,12 +273,11 @@
         flex-direction: column;
         justify-content: space-around;
         align-items: center;
-        /* background-color: lightgray; */
         width: 65%;
     }
 
     table {
-        margin-left: 30%;
+        margin-left: 35%;
         border-spacing: 10px;
         padding-left: 12px;
         padding-right: 12px;
@@ -313,7 +312,6 @@
     .stop {
         justify-self: end;
         height: 200px;
-        margin-right: 175px;
         transform: translateY(80px);
     }
 </style>

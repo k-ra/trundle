@@ -4,7 +4,9 @@
     font-family: "EB Garamond", serif;
 }
 
-#this {
+h1#this {
     font-size: 30px;
     text-align: center;
+    padding: 0;
+    margin: 0;
 }

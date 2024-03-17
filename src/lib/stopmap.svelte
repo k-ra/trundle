@@ -44,7 +44,6 @@
                     class="map-contents"
                     style={transform(stop.stop_lat, stop.stop_lon)}
                 >
-                    <!-- <div class="dot"></div> -->
                     <button
                         class={status}
                         on:click={() => handleStopClick(stop)}
@@ -55,12 +54,11 @@
                 </div>
             {/each}
         </div>
-
-        <h1 id="this">
-            {$start.stop_name} --> {$dest.stop_name}
-        </h1>
     </div>
 {/if}
+<h1 id="this">
+    {$start.stop_name} --> {$dest.stop_name}
+</h1>
 
 <style>
     .map_container {
@@ -71,12 +69,11 @@
         justify-content: center;
         align-items: center;
     }
-
     .map {
         background-image: url("map.jpg");
         background-repeat: no-repeat;
         background-position: center;
-        border: 2px solid black;
+        /* border: 2px solid black; */
         position: relative;
         width: 850px;
         height: 840px;
