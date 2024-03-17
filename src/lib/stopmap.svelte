@@ -1,13 +1,24 @@
 <script lang="ts">
-    export let stops;
+    import stops from "../data/processed/stops.json";
     import { start, dest } from "../stores/userdata.js";
     let status = "start";
     let input = true;
     // mapping
     function transform(lat: number, lon: number) {
-        const adj_lat = (lat - 42.37) * -32000;
-        const adj_lon = (lon + 71.12) * 32000;
-        console.log(adj_lat, adj_lon);
+        // // convert floats to strings with 9 decimal places (add trailing zeroes if needed)
+        // const lat_string = lat.toFixed(9);
+        // const lon_string = lon.toFixed(9);
+
+        // // knock off decimals, convert to integers
+        // const lat_int = parseInt(lat_string.replace(".", ""));
+        // const lon_int = parseInt(lon_string.replace(".", ""));
+
+        // // adjust ints
+        // const adj_lat = (lat_int - 42370000000) * -32000;
+        // const adj_lon = (lon_int + 71120000000) * 32000;
+
+        const adj_lat = (lat - 42.3712) * -32000;
+        const adj_lon = (lon + 71.1195) * 32000;
 
         return `transform: translate(${adj_lon}px, ${adj_lat}px)`;
     }
@@ -19,7 +30,6 @@
             status = "end";
         } else {
             dest.set(stop);
-            status = "";
             input = false;
         }
     }
@@ -49,6 +59,9 @@
 
 <style>
     .map_container {
+        background-image: url("map.jpg");
+        background-repeat: no-repeat;
+        background-position: center;
         width: 100%;
         display: flex;
         justify-content: center;
@@ -56,8 +69,8 @@
 
     .map {
         position: relative;
-        width: 800px;
-        height: 800px;
+        width: 850px;
+        height: 840px;
         /* border: 2px solid black; */
     }
 
@@ -68,7 +81,6 @@
     }
 
     .dot {
-        /* display: inline; */
         width: 20px;
         height: 20px;
         border-radius: 50%;
@@ -76,16 +88,21 @@
         background-color: transparent;
         white-space: nowrap;
         display: inline-block;
+        z-index: 1;
     }
     .dot:hover {
         background-color: black;
+        z-index: inherit;
     }
 
     .dot:hover + .label {
+        z-index: inherit;
         display: inline-block;
+        background-color: white;
     }
 
     .label {
+        z-index: 2;
         display: none;
     }
 
