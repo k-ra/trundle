@@ -3,6 +3,8 @@
     import { start, dest } from "../stores/userdata.js";
     import { map } from "../stores/currentpage.js";
     import Trains from "./trains.svelte";
+    import { epochify, depochify } from "$lib/epochify.js";
+    import Layout from "../routes/+layout.svelte";
 
     interface Suggestion {
         start: any;
@@ -10,20 +12,6 @@
         route_id: number;
         route_name: string;
         live_arrival_time: number;
-    }
-
-    function epochify(date_string: string) {
-        var now = Date.now();
-        // // convert "18:23:00"-likes to epoch format
-        // const number_of_milliseconds_in_one_day = 86400000;
-
-        // // test if first two digits are 00-04
-        // if (parseInt(date_string.slice(0, 2)) < 5) {
-        //     now += number_of_milliseconds_in_one_day;
-        // }
-
-        let date = new Date(now);
-        return Date.parse(date.toDateString() + " " + date_string);
     }
 
     // gets trips between start and dest from now to 2 hours out
@@ -50,7 +38,7 @@
                     break;
                 }
 
-                const number_of_milliseconds_in_two_hours = 7200000;
+                const number_of_milliseconds_in_one_hour = 3600000;
                 const day_names = [
                     "sunday",
                     "monday",
@@ -64,7 +52,7 @@
                 const time_to_end_of_trip =
                     epochify(trip.last_arrival_time) - Date.now();
                 if (
-                    time_to_end_of_trip < number_of_milliseconds_in_two_hours &&
+                    time_to_end_of_trip < number_of_milliseconds_in_one_hour &&
                     time_to_end_of_trip >= 0 &&
                     trip.days.includes(day_names[new Date(Date.now()).getDay()])
                 ) {
@@ -99,7 +87,10 @@
             };
             for (let stop of valid_stops) {
                 if (looking_for_start) {
-                    if (stop.stop_id === start_id) {
+                    if (
+                        stop.stop_id === start_id &&
+                        epochify(stop.arrival_time) >= Date.now()
+                    ) {
                         suggestion.start = stop;
                         looking_for_start = false;
                     }
@@ -144,13 +135,15 @@
                         let trip_update = trip.trip_update;
                         let trip_id = trip_update.trip.trip_id;
                         if (
-                            trip_id === suggestion_start_trip_id ||
-                            trip_id === suggestion_dest_trip_id
+                            trip_id == suggestion_start_trip_id ||
+                            trip_id == suggestion_dest_trip_id ||
+                            trip_id == suggestion_start_trip_id - 1
                         ) {
+                            console.log(trip_id);
                             for (let stop of trip_update.stop_time_update) {
-                                if (stop.stop_id === suggestion.start.stop_id) {
+                                if (stop.stop_id == suggestion.start.stop_id) {
                                     suggestion.live_arrival_time =
-                                        stop.arrival.time;
+                                        stop.arrival.time * 1000; // it's given in seconds, oddly enough
                                     break;
                                 }
                             }
@@ -175,11 +168,12 @@
             need_new_suggestions = false;
         }
         if (interval === 0) {
+            suggestions = getSuggestionUpdates(suggestions);
             interval = setInterval(() => {
                 suggestions = getSuggestionUpdates(suggestions);
             }, 20000);
         }
-        console.log(interval);
+        suggestions = suggestions;
     }
     // when map is opened, clear suggestions
     $: if ($map) {
@@ -192,38 +186,68 @@
             need_new_suggestions = true;
         }
     }
+
+    // convert times from "03:30:00" to "3:30"
+    function timeSlicken(time: string) {
+        let time_arr = time.split(":");
+        let hours = parseInt(time_arr[0]);
+        let minutes = time_arr[1];
+        let ampm = "am";
+        if (hours > 12) {
+            hours -= 12;
+            ampm = "pm";
+        }
+        return `${hours}:${minutes} ${ampm}`;
+    }
+
+    // animate ellipses for pending
+    var iter_ellipses = ".";
+    const _ = setInterval(() => {
+        if (iter_ellipses.length === 3) {
+            iter_ellipses = ".";
+        } else {
+            iter_ellipses += ".";
+        }
+    }, 500);
 </script>
 
 {#if !$map}
     <div class="list">
-        {#each suggestions as suggestion}
-            <div class="suggestion">
-                <div class="route">
-                    <p>
-                        {suggestion.route_name}: board at {suggestion.start
-                            .arrival_time}, arrive at {suggestion.dest
-                            .arrival_time}
-                    </p>
-                </div>
-                <div class="eta">
-                    <p>
-                        {#if suggestion.live_arrival_time != 0}
-                            estimated time of arrival: {suggestion.live_arrival_time}
-                        {:else}
-                            no live information on this trip... it may not
-                            currently be in service!
-                        {/if}
-                    </p>
-                </div>
-            </div>
-        {:else}
-            <div class="suggestion">
-                <p>no suggestions for this particular route! :(</p>
-            </div>
-        {/each}
-    </div>
+        <div class="toprow">
+            <table>
+                <tr>
+                    <th>train</th>
+                    <th>board at</th>
+                    <th>arrive at</th>
+                    <th>live eta</th>
+                </tr>
+                {#each suggestions as suggestion}
+                    <tr class="suggestion"> </tr><tr>
+                        <td class="rtname">{suggestion.route_name}</td>
+                        <td> {timeSlicken(suggestion.start.arrival_time)}</td>
+                        <td> {timeSlicken(suggestion.dest.arrival_time)}</td>
+                        <td class="eta">
+                            {#if suggestion.live_arrival_time != 0}
+                                ~{timeSlicken(
+                                    depochify(suggestion.live_arrival_time),
+                                )}{iter_ellipses}
+                            {:else}
+                                [pending{iter_ellipses}]
+                            {/if}</td
+                        >
+                    </tr>
+                {:else}
+                    <td colspan="4" class="suggestion">
+                        <p>no suggestions for this particular route!</p>
+                    </td>
+                {/each}
+            </table>
 
-    <Trains {suggestions} />
+            <img src="stop.png" class="stop" alt="train station stop" />
+        </div>
+
+        <Trains {suggestions} />
+    </div>
 {/if}
 
 <style>
@@ -233,6 +257,15 @@
         justify-content: flex-start;
         align-items: center;
         margin: 20px;
+        font-size: 18pt;
+    }
+
+    .toprow {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: end;
+        width: 100%;
     }
 
     .suggestion {
@@ -240,15 +273,47 @@
         flex-direction: column;
         justify-content: space-around;
         align-items: center;
-        background-color: lightgray;
+        /* background-color: lightgray; */
         width: 65%;
     }
 
-    .route {
-        font-size: 20px;
+    table {
+        margin-left: 30%;
+        border-spacing: 10px;
+        padding-left: 12px;
+        padding-right: 12px;
+        background: url("sign.jpg");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 100% 100%;
+    }
+
+    th {
+        /* background: url("signlet.jpg");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 100% 100%; */
+        padding: 10px;
+    }
+
+    td {
+        text-align: center;
+        padding: 5px;
     }
 
     .eta {
-        font-size: 16px;
+        text-align: left;
+        width: 110px;
+    }
+
+    .rtname {
+        text-transform: uppercase;
+    }
+
+    .stop {
+        justify-self: end;
+        height: 200px;
+        margin-right: 175px;
+        transform: translateY(80px);
     }
 </style>

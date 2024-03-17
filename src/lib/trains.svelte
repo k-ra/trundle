@@ -7,54 +7,36 @@
         live_arrival_time: number;
     }
     export let suggestions: Suggestion[];
-    import { start } from "../stores/userdata.js";
     import { epochify } from "$lib/epochify.js";
-
-    // let time = Date.now();
-    //fake data
-    // let trips = [
-    //     {
-    //         route: { route_id: 2235, route_long_name: "1636'er" },
-    //         start: { arrival_time: "02:00:00" },
-    //     },
-    // ];
 
     var now = Date.now();
     const _ = setInterval(() => {
         now = Date.now();
     }, 200);
 
-    $: etas = suggestions.map((suggestion) =>
-        calcEta(suggestion.start.live_arrival_time, now),
-    );
+    $: etas = calcEta(now, suggestions);
 
-    function calcEta(arrival: string, timenow: number) {
-        const eta = (epochify(arrival) - timenow) / (1000 * 60);
-        return eta;
+    function calcEta(now: number, suggestions: Suggestion[]): number[] {
+        return suggestions.map((suggestion) => {
+            if (suggestion.live_arrival_time != 0) {
+                console.log((suggestion.live_arrival_time - now) / (1000 * 60));
+                return (suggestion.live_arrival_time - now) / (1000 * 60);
+            }
+            return (
+                (epochify(suggestion.start.arrival_time) - now) / (1000 * 60)
+            );
+        });
     }
 
     function trainTransform(eta: number) {
         let etaish = 1400 - eta * 63;
         return `transform: translateX(${etaish}px)`;
-        // let etaPx = 1200 - eta * 15;
-        // return `transform: translateX(${etaPx}px)`;
-    }
-
-    function trackTransform(count: number) {
-        let reactivesz = 30 / count;
-        return `height:${reactivesz}%`;
     }
 </script>
 
-<div class="styleheader">
-    {$start.stop_name}
-    <!-- <img src="stop.png" alt="trainstop" /> -->
-</div>
-epochify: {epochify("01:34:00")} millis: {now}.
-
 <div class="train_container">
-    {#each suggestions as trip, i}
-        <div class="track" style={trackTransform(1)}>
+    {#each suggestions.slice(0, 3) as trip, i}
+        <div class="track">
             <img
                 class="train"
                 src="trains/{trip.route_id}.png"
@@ -72,18 +54,18 @@ epochify: {epochify("01:34:00")} millis: {now}.
         justify-content: flex-start;
         align-items: center;
         width: 100%;
-        height: auto;
-        position: relative;
+        height: 40%;
     }
+
     .track {
         width: 100%;
-        background-image: url("tracks.jpg");
+        background-image: url("mudtracks.png");
         background-repeat: no-repeat;
-        background-position: center;
-        background-size: 100% auto;
+        background-position: center bottom;
+        background-size: auto 100%;
     }
+
     .train {
         width: 350px;
-        /* transform: translate(1200px, 0%); */
     }
 </style>

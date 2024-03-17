@@ -1,24 +1,29 @@
 <script lang="ts">
-    // data
-    import stops from "../data/processed/stops.json";
-
-    // components
     import Map from "$lib/stopmap.svelte";
-    import Quirk from "$lib/quirk.svelte";
     import Sign from "$lib/sign.svelte";
-    import Trains from "$lib/trains.svelte";
-    // stores
-    import { start, dest } from "../stores/userdata.js";
 </script>
 
-<Sign />
+<div class="page">
+    <Map />
+    <Sign />
+    <h1 id="this" style="font-weight: normal;">trundle</h1>
+</div>
 
-<h1 id="this" style="font-weight: normal;">trundle time</h1>
+<style>
+    .page {
+        width: 99vw;
+        height: 98vh;
+        background-image: url("grass.jpg");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 100% 100%;
+    }
 
-<Map />
-
-<h1 id="this">
-    {$start.stop_name} --> {$dest.stop_name}
-</h1>
-
-<Quirk />
+    #this {
+        position: fixed;
+        top: 8px;
+        right: 50px;
+        font-size: 30pt;
+        text-align: center;
+    }
+</style>

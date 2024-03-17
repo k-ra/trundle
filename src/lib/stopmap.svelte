@@ -55,20 +55,28 @@
                 </div>
             {/each}
         </div>
+
+        <h1 id="this">
+            {$start.stop_name} --> {$dest.stop_name}
+        </h1>
     </div>
 {/if}
 
 <style>
     .map_container {
-        background-image: url("map.jpg");
-        background-repeat: no-repeat;
-        background-position: center;
         width: 100%;
+        height: 100%;
         display: flex;
+        flex-direction: column;
         justify-content: center;
+        align-items: center;
     }
 
     .map {
+        background-image: url("map.jpg");
+        background-repeat: no-repeat;
+        background-position: center;
+        border: 2px solid black;
         position: relative;
         width: 850px;
         height: 840px;
