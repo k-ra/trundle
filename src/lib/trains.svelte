@@ -1,83 +1,86 @@
 <script lang="ts">
+    interface Suggestion {
+        start: any;
+        dest: any;
+        route_id: number;
+        route_name: string;
+        live_arrival_time: number;
+    }
+    export let suggestions: Suggestion[];
     import { start } from "../stores/userdata.js";
-    // import: # of distinct routes
-    let numroutes;
-    // import: trains
-    let trains = new Array(numroutes);
+    import { epochify } from "$lib/epochify.js";
 
-    let traineta = 25; //for testing
+    // let time = Date.now();
+    //fake data
+    // let trips = [
+    //     {
+    //         route: { route_id: 2235, route_long_name: "1636'er" },
+    //         start: { arrival_time: "02:00:00" },
+    //     },
+    // ];
 
-    // //formatting the trains
-    // function traintransform(trains: Array<object>) {
-    //     for (let train in trains) {
-    //         //let eta = train.eta;
-    //         let etaPx = 100 - traineta;
-    //         return "transform: translate(${etaPx}px, 10px)";
-    //     }
-    //     //transform: translate(30%, 50%);
-    // }
+    var now = Date.now();
+    const _ = setInterval(() => {
+        now = Date.now();
+    }, 200);
 
-    function traintransform1(eta: number) {
-        let etaPx = 1200 - eta * 40;
-        return `transform: translate(${etaPx}px, 0%)`;
+    $: etas = suggestions.map((suggestion) =>
+        calcEta(suggestion.start.live_arrival_time, now),
+    );
 
-        //transform: translate(30%, 50%);
-    }
-    function tracktransform(count: number) {
-        let reactivesz = 30 + 50 / count;
-        //let heightpx = count * 20;
-        return "transform: translate(${reactivesz}%, 100%)";
-        //transform: translate(30%, 50%);
+    function calcEta(arrival: string, timenow: number) {
+        const eta = (epochify(arrival) - timenow) / (1000 * 60);
+        return eta;
     }
 
-    // array: top trip of each route, name of route and ETA
-    // if: less than 25 min, then show
-    //         show it on the line. calculate 0 eta = right. 25 eta = left.
-    //         reactive? think about it later.
-    // else: put a little bubble with "ETA" on the left side of screen
+    function trainTransform(eta: number) {
+        let etaish = 1400 - eta * 63;
+        return `transform: translateX(${etaish}px)`;
+        // let etaPx = 1200 - eta * 15;
+        // return `transform: translateX(${etaPx}px)`;
+    }
+
+    function trackTransform(count: number) {
+        let reactivesz = 30 / count;
+        return `height:${reactivesz}%`;
+    }
 </script>
 
 <div class="styleheader">
     {$start.stop_name}
     <!-- <img src="stop.png" alt="trainstop" /> -->
-    <!-- style={traintransform1(500)} -->
 </div>
+epochify: {epochify("01:34:00")} millis: {now}.
+
 <div class="train_container">
-    <div class="track" style={tracktransform(1)}>
-        <img
-            class="train"
-            src="trains/2235.png"
-            alt="alt"
-            style={traintransform1(30)}
-        />
-    </div>
-</div>
-<div class="train_container">
-    hi
-    <!-- {#each trains as train, i}
-        <div class="track" style={tracktransform(i + 1)}>
-            <img src="track.png" alt="train track of {train.route_name}" />
-            <div class="train" style={traintransform(train.eta)}>
-                <img
-                    src="{train.route_id}.png"
-                    alt="the {train.route_name} is {train.eta} away"
-                />
-            </div>
+    {#each suggestions as trip, i}
+        <div class="track" style={trackTransform(1)}>
+            <img
+                class="train"
+                src="trains/{trip.route_id}.png"
+                alt="alt"
+                style={trainTransform(etas[i])}
+            />
         </div>
-    {/each} -->
+    {/each}
 </div>
 
 <style>
     .train_container {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
         width: 100%;
-        /* display: flex; */
+        height: auto;
         position: relative;
     }
     .track {
+        width: 100%;
         background-image: url("tracks.jpg");
         background-repeat: no-repeat;
         background-position: center;
-        background-size: auto;
+        background-size: 100% auto;
     }
     .train {
         width: 350px;

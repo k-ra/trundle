@@ -11,7 +11,6 @@
     import { start, dest } from "../stores/userdata.js";
 </script>
 
-<Trains />
 <Sign />
 
 <h1 id="this" style="font-weight: normal;">trundle time</h1>

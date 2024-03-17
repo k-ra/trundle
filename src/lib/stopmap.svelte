@@ -1,8 +1,9 @@
 <script lang="ts">
     import stops from "../data/processed/stops.json";
     import { start, dest } from "../stores/userdata.js";
+    import { map } from "../stores/currentpage.js";
+
     let status = "start";
-    let input = true;
     // mapping
     function transform(lat: number, lon: number) {
         // // convert floats to strings with 9 decimal places (add trailing zeroes if needed)
@@ -30,12 +31,12 @@
             status = "end";
         } else {
             dest.set(stop);
-            input = false;
+            map.set(false);
         }
     }
 </script>
 
-{#if input}
+{#if $map}
     <div class="map_container">
         <div class="map">
             {#each stops as stop}
