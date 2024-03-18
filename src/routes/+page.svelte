@@ -13,9 +13,8 @@
     >
         <Map />
         <Sign />
-        <div class="footer">
-            <h1 id="this" style="font-weight: normal;">trundle</h1>
-        </div>
+
+        <h1 class="title">trundle</h1>
     </div>
 </body>
 
@@ -34,11 +33,12 @@
         margin: 0px;
     }
 
-    #this {
+    .title {
         position: fixed;
-        top: 8px;
+        top: -18px;
         right: 50px;
         font-size: 40pt;
+        font-weight: normal;
         text-align: center;
     }
 </style>

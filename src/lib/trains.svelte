@@ -19,7 +19,6 @@
     function calcEta(now: number, suggestions: Suggestion[]): number[] {
         return suggestions.map((suggestion) => {
             if (suggestion.live_arrival_time != 0) {
-                console.log((suggestion.live_arrival_time - now) / (1000 * 60));
                 return (suggestion.live_arrival_time - now) / (1000 * 60);
             }
             return (

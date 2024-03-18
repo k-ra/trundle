@@ -54,11 +54,12 @@
                 </div>
             {/each}
         </div>
+
+        <h1 id="this">
+            {$start.stop_name} → {$dest.stop_name}
+        </h1>
     </div>
 {/if}
-<h1 id="this">
-    {$start.stop_name} --> {$dest.stop_name}
-</h1>
 
 <style>
     .map_container {
@@ -69,6 +70,7 @@
         justify-content: center;
         align-items: center;
     }
+
     .map {
         background-image: url("map.jpg");
         background-repeat: no-repeat;
@@ -96,6 +98,7 @@
         display: inline-block;
         z-index: 1;
     }
+
     .dot:hover {
         background-color: black;
         z-index: inherit;

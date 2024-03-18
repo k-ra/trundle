@@ -110,6 +110,13 @@
                 }
             }
         }
+
+        suggestions.sort((a, b) => {
+            return (
+                epochify(a.start.arrival_time) - epochify(b.start.arrival_time)
+            );
+        });
+
         return suggestions;
     }
 
@@ -127,7 +134,6 @@
                 for (let suggestion of suggestions) {
                     let suggestion_start_trip_id =
                         suggestion.start.trip.trip_id;
-                    let suggestion_dest_trip_id = suggestion.dest.trip.trip_id;
                     if (!Object.hasOwn(json, "entity")) {
                         return;
                     }
@@ -136,12 +142,14 @@
                         let trip_id = trip_update.trip.trip_id;
                         if (
                             trip_id == suggestion_start_trip_id ||
-                            trip_id == suggestion_dest_trip_id ||
                             trip_id == suggestion_start_trip_id - 1
                         ) {
                             console.log(trip_id);
                             for (let stop of trip_update.stop_time_update) {
                                 if (stop.stop_id == suggestion.start.stop_id) {
+                                    console.log(
+                                        depochify(stop.arrival.time * 1000),
+                                    );
                                     suggestion.live_arrival_time =
                                         stop.arrival.time * 1000; // it's given in seconds, oddly enough
                                     break;
@@ -171,9 +179,8 @@
             suggestions = getSuggestionUpdates(suggestions);
             interval = setInterval(() => {
                 suggestions = getSuggestionUpdates(suggestions);
-            }, 20000);
+            }, 10000);
         }
-        suggestions = suggestions;
     }
     // when map is opened, clear suggestions
     $: if ($map) {
@@ -218,16 +225,16 @@
                 <tr>
                     <th>train</th>
                     <th>board at</th>
-                    <th>arrive at</th>
+                    <th>alight at</th>
                     <th>live eta</th>
                 </tr>
                 {#each suggestions as suggestion}
-                    <tr class="suggestion"> </tr><tr>
+                    <tr>
                         <td class="rtname">{suggestion.route_name}</td>
                         <td> {timeSlicken(suggestion.start.arrival_time)}</td>
                         <td> {timeSlicken(suggestion.dest.arrival_time)}</td>
                         <td class="eta">
-                            {#if suggestion.live_arrival_time != 0}
+                            {#if suggestion.live_arrival_time != 0 && epochify(suggestion.start.arrival_time) - suggestion.live_arrival_time <= 900000}
                                 ~{timeSlicken(
                                     depochify(suggestion.live_arrival_time),
                                 )}{iter_ellipses}
@@ -237,9 +244,11 @@
                         >
                     </tr>
                 {:else}
-                    <td colspan="4" class="suggestion">
-                        <p>no suggestions for this particular route!</p>
-                    </td>
+                    <tr>
+                        <td colspan="4">
+                            <p>no suggestions for this particular route!</p>
+                        </td>
+                    </tr>
                 {/each}
             </table>
 
@@ -248,6 +257,8 @@
 
         <Trains {suggestions} />
     </div>
+
+    <h2 class="current_route">{$start.stop_name} → {$dest.stop_name}</h2>
 {/if}
 
 <style>
@@ -268,19 +279,12 @@
         width: 100%;
     }
 
-    .suggestion {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-        align-items: center;
-        width: 65%;
-    }
-
     table {
         margin-left: 35%;
         border-spacing: 10px;
         padding-left: 12px;
         padding-right: 12px;
+        padding-bottom: 10px;
         background: url("sign.jpg");
         background-repeat: no-repeat;
         background-position: center;
@@ -302,7 +306,7 @@
 
     .eta {
         text-align: left;
-        width: 110px;
+        width: 120px;
     }
 
     .rtname {
@@ -312,6 +316,16 @@
     .stop {
         justify-self: end;
         height: 200px;
-        transform: translateY(80px);
+        transform: translateY(110px);
+    }
+
+    .current_route {
+        position: fixed;
+        top: 55px;
+        right: 50px;
+        font-size: 18pt;
+        font-weight: normal;
+        text-align: center;
+        text-transform: lowercase;
     }
 </style>
