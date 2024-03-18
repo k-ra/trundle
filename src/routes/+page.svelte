@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Map from "$lib/stopmap.svelte";
+    import Map from "$lib/map.svelte";
     import Sign from "$lib/sign.svelte";
     import { map } from "../stores/currentpage.js";
 </script>
@@ -20,9 +20,8 @@
 
 <style>
     .page {
-        width: 99vw;
-        height: 98vh;
-        background-image: url("grass.jpg");
+        width: 100vw;
+        height: 100vh;
         background-repeat: no-repeat;
         background-position: center;
         background-size: 100% 100%;

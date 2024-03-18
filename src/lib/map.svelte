@@ -4,7 +4,6 @@
     import { map } from "../stores/currentpage.js";
 
     let status = "start";
-    // mapping
     function transform(lat: number, lon: number) {
         // // convert floats to strings with 9 decimal places (add trailing zeroes if needed)
         // const lat_string = lat.toFixed(9);
@@ -25,13 +24,14 @@
     }
 
     // input stop_id to store
-    function handleStopClick(stop: object) {
+    function handleStopClick(stop: any) {
         if (status === "start") {
             start.set(stop);
             status = "end";
         } else {
             dest.set(stop);
             map.set(false);
+            console.debug(`setting ${$map} to false, switching to sign page`);
         }
     }
 </script>
@@ -54,11 +54,11 @@
                 </div>
             {/each}
         </div>
-
-        <h1 id="this">
-            {$start.stop_name} → {$dest.stop_name}
-        </h1>
     </div>
+
+    <h1 class="current_route">
+        {$start.stop_name} → {$dest.stop_name}
+    </h1>
 {/if}
 
 <style>
@@ -67,25 +67,23 @@
         height: 100%;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: end;
         align-items: center;
     }
 
     .map {
         background-image: url("map.jpg");
         background-repeat: no-repeat;
-        background-position: center;
-        /* border: 2px solid black; */
+        background-position: center center;
         position: relative;
-        width: 850px;
-        height: 840px;
-        /* border: 2px solid black; */
+        width: 100%;
+        height: 100%;
     }
 
     .map-contents {
         position: absolute;
-        top: 50%;
-        left: 50%;
+        top: 44.5%;
+        left: 53.7%;
     }
 
     .dot {
@@ -135,5 +133,15 @@
     button:hover {
         font-weight: bolder;
         /* font-size: 20pt; */
+    }
+
+    .current_route {
+        position: fixed;
+        width: 100%;
+        bottom: 40px;
+        font-size: 22pt;
+        font-weight: normal;
+        text-align: center;
+        text-transform: lowercase;
     }
 </style>

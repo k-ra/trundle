@@ -7,10 +7,10 @@
         live_arrival_time: number;
     }
     export let suggestions: Suggestion[];
-    import { epochify } from "$lib/epochify.js";
+    import { epochify, isEtaValid } from "$lib/epochify.js";
 
     var now = Date.now();
-    const _ = setInterval(() => {
+    setInterval(() => {
         now = Date.now();
     }, 200);
 
@@ -18,7 +18,7 @@
 
     function calcEta(now: number, suggestions: Suggestion[]): number[] {
         return suggestions.map((suggestion) => {
-            if (suggestion.live_arrival_time != 0) {
+            if (isEtaValid(suggestion)) {
                 return (suggestion.live_arrival_time - now) / (1000 * 60);
             }
             return (
