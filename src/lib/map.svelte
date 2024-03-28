@@ -4,7 +4,7 @@
     import { map } from "../stores/currentpage.js";
 
     let status = "start";
-    function transform(lat: number, lon: number) {
+    function transform(lat: number, lon: number, name: string) {
         // // convert floats to strings with 9 decimal places (add trailing zeroes if needed)
         // const lat_string = lat.toFixed(9);
         // const lon_string = lon.toFixed(9);
@@ -17,8 +17,16 @@
         // const adj_lat = (lat_int - 42370000000) * -32000;
         // const adj_lon = (lon_int + 71120000000) * 32000;
 
-        const adj_lat = (lat - 42.3712) * -32000;
-        const adj_lon = (lon + 71.1195) * 32000;
+        let adj_lat = (lat - 42.3712) * -32000;
+        let adj_lon = (lon + 71.1195) * 32000;
+
+        if (
+            name === "Stadium (Northbound)" ||
+            name === "Barry's Corner (Northbound)"
+        ) {
+            adj_lat -= 14;
+            adj_lon += 14;
+        }
 
         return `transform: translate(${adj_lon}px, ${adj_lat}px)`;
     }
@@ -42,7 +50,11 @@
             {#each stops as stop}
                 <div
                     class="map-contents"
-                    style={transform(stop.stop_lat, stop.stop_lon)}
+                    style={transform(
+                        stop.stop_lat,
+                        stop.stop_lon,
+                        stop.stop_name,
+                    )}
                 >
                     <button
                         class={status}

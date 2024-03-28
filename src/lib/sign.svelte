@@ -123,7 +123,12 @@
                     console.debug(
                         `dest: checking whether ${stop.stop_id} is equal to ${dest_id}...`,
                     );
-                    if (stop.stop_id === dest_id) {
+                    if (
+                        stop.stop_id === dest_id &&
+                        epochify(stop.arrival_time) >
+                            epochify(suggestion.start.arrival_time) &&
+                        stop.trip.trip_id === suggestion.start.trip.trip_id
+                    ) {
                         suggestion.dest = stop;
                         console.debug(`check passed; valid suggestion found:`);
                         console.debug(suggestion);
@@ -355,10 +360,10 @@
     }
 
     th {
-        background: url("signlet.jpg");
+        /* background: url("signlet.jpg");
         background-repeat: no-repeat;
         background-position: center;
-        background-size: 100% 100%;
+        background-size: 100% 100%; */
         padding: 10px;
     }
 

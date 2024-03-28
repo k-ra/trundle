@@ -18,10 +18,10 @@ interface Suggestion {
 }
 
 export function isEtaValid(suggestion: Suggestion) {
-  const number_of_milliseconds_in_fifteen_minutes = 900000;
+  const number_of_milliseconds_in_ten_minutes = 600000;
   return (
     suggestion.live_arrival_time != 0 &&
     epochify(suggestion.start.arrival_time) - suggestion.live_arrival_time <=
-      number_of_milliseconds_in_fifteen_minutes
+      number_of_milliseconds_in_ten_minutes
   );
 }
