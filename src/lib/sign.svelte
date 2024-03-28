@@ -219,6 +219,12 @@
         return suggestions;
     }
 
+    function backButton() {
+        start.set({ stop_name: "click start", stop_id: 0 });
+        dest.set({ stop_name: "click dest", stop_id: 0 });
+        map.set(true);
+    }
+
     var reactivity_hack = Date.now();
     setInterval(() => {
         reactivity_hack = Date.now();
@@ -291,6 +297,8 @@
 {#if !$map}
     <div class="list">
         <div class="toprow">
+            <button class="back-button" on:click={backButton}>back</button>
+
             <table>
                 <tr>
                     <th>train</th>
@@ -348,7 +356,7 @@
     }
 
     table {
-        margin-left: 35%;
+        margin-left: 20%;
         border-spacing: 10px;
         padding-left: 12px;
         padding-right: 12px;
@@ -395,5 +403,19 @@
         font-weight: normal;
         text-align: center;
         text-transform: lowercase;
+    }
+
+    .back-button {
+        align-self: start;
+        margin-left: 20px;
+        margin-top: 20px;
+        padding-left: 8px;
+        padding-right: 8px;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        font-size: 18pt;
+        background-color: #f0f0f0;
+        border: 1px solid #000;
+        border-radius: 5px;
     }
 </style>

@@ -3,7 +3,6 @@
     import { start, dest } from "../stores/userdata.js";
     import { map } from "../stores/currentpage.js";
 
-    let status = "start";
     function transform(lat: number, lon: number, name: string) {
         // // convert floats to strings with 9 decimal places (add trailing zeroes if needed)
         // const lat_string = lat.toFixed(9);
@@ -33,9 +32,8 @@
 
     // input stop_id to store
     function handleStopClick(stop: any) {
-        if (status === "start") {
+        if ($start.stop_id === 0) {
             start.set(stop);
-            status = "end";
         } else {
             dest.set(stop);
             map.set(false);
@@ -57,7 +55,7 @@
                     )}
                 >
                     <button
-                        class={status}
+                        class={$start.stop_id === 0 ? "start" : "end"}
                         on:click={() => handleStopClick(stop)}
                     >
                         <div class="dot"></div>
