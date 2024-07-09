@@ -21,6 +21,6 @@ When(ish) is My Bus? User-centered Visualizations of Uncertainty in Everyday, Mo
 
 **Video Demo**
 
-[![Trundle Demo](trundlevid.png)](http://www.youtube.com/watch?v=uPznQYCXI-c?si=URgV9y5tUj4utXfe "Trundle Demo")
+[![Trundle Demo](trundle2.png)](http://www.youtube.com/watch?v=uPznQYCXI-c?si=URgV9y5tUj4utXfe "Trundle Demo")
 
 By Kyra Mo and Patrick Thornton
